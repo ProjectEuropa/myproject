@@ -52,6 +52,8 @@ class InvitationController extends Controller
                 $user->password = Hash::make($request->password);
                 $user->save();
 
+                $i->where('email', $i->email)->delete();
+
                 Auth::login($user);
 
                 return redirect('/')->with('flash_message', '招待を承諾しました！');
