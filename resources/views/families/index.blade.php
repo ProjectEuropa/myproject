@@ -4,11 +4,20 @@
 
 @section('content')
     @include('familynav')
+    @if (session('flash_message'))
+    <div class="flash_message bg-success text-center py-3 my-0">
+        {{ session('flash_message') }}
+    </div>
+    @endif
+    @if (session('error_message'))
+    <div class="flash_message bg-danger text-center py-3 my-0">
+        {{ session('error_message') }}
+    </div>
+    @endif
     <div class="card">
         <h2 class="card-header text-center">素晴らしい家族一覧</h2>
         <div class="card-body text-center">
             <p class="lead">それぞれの該当する家族からお入りくださいませ<br>
-            ※家族に入る際はパスワードが必要となります<br>
             また下のボタンにより新たに家族を作成する事もできます<br>
             </p>
             <a class="btn btn-primary" href="{{ route('families.create') }}" role="button">新規で家族を作成する</a>
@@ -29,9 +38,16 @@
                                         <td class="lead">{{ $family->family_name }}</td>
                                         <td class="text-right">
                                             <a class="btn btn-lg btn-primary" href="{{ route('posts.index', ['family_id' => $family->id]) }}" role="button">
-                                                この家族に入る
+                                                所属家族のPOSTを見る
                                             </a>
                                         </td>
+                                        @if($isHost)
+                                        <td class="text-right">
+                                            <a class="btn btn-lg btn-info" href="{{ route('invitation.index') }}" role="button">
+                                                招待する
+                                            </a>
+                                        </td>
+                                        @endif
                                     </tr>
                                 </tbody>
                             </table>

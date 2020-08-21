@@ -18,12 +18,14 @@ class PostController extends Controller
     {
         $family = Family::find($request->family_id);
         $user = Auth::user();
-        $user->family_id = $request->family_id;
-        $user->save();
-        
-        $users = User::get();
 
-        return view('posts.index', ['family' => $family, 'users' => $users]);
+        if ($family->id == $user->family_id) {
+            $users = User::get();
+            return view('posts.index', ['family' => $family, 'users' => $users]);
+        } else {
+            return redirect('/')->with('error_message', '閲覧できる権限がありません');
+        }
+
     }
 
     public function create()
@@ -34,7 +36,7 @@ class PostController extends Controller
     public function store(PostRequest $request, Post $post)
     {
         $validator = Validator::make($request->all() , [
-            'body' => 'required|max:255', 
+            'body' => 'required|max:255',
             'image' => 'required']);
 
         if ($validator->fails())
@@ -48,7 +50,7 @@ class PostController extends Controller
         $post->body = $request->body;
         $post->user_id = Auth::user()->id;
 
-        if (isset($form['image'])) 
+        if (isset($form['image']))
         {
             $path = $request->file('image')->store('public/image');
             $post->image_path = basename($path);
@@ -61,7 +63,7 @@ class PostController extends Controller
 
         $post->fill($form);
         $post->save();
-        
+
 
         return view('posts.index', ['family' => $family]);
     }
@@ -91,7 +93,7 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
-        
+
         return redirect()->route('posts.index');
     }
 
